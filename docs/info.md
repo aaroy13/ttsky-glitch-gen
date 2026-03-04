@@ -9,12 +9,13 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-Explain how your project works
+This project implements a small synchronous glitch art generator.
+The design uses three main components:
+ * 8-bit LFSR - generates a deterministic pseudo-random sequence based on the input seed.
+ * 8-bit counter - increments every update cycle to introduce motion into the pattern.
+ * Mode selector (2 bits) - selects on of four mixing functions that combine the LFSR and counter using simple bitwise operations
 
 ## How to test
 
-Explain how to use your project
+Use make to run the included  simulation testbench. This will compile the design and execute the test located in test/tb.v.
 
-## External hardware
-
-List external hardware used in your project (e.g. PMOD, LED display, etc), if any
