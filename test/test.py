@@ -60,7 +60,6 @@ async def reset_dut(dut, seed, mode):
     await RisingEdge(dut.clk)
     dut.rst_n.value = 1
 
-    await RisingEdge(dut.clk)
     await Timer(1, unit="ns")
     
     # Reference state
@@ -135,7 +134,7 @@ async def test_project(dut):
         await RisingEdge(dut.clk)
         await Timer(1, unit="ns")
         assert dut.uo_out.value.is_resolvable, "Fail: uo_out has unknwn bits {dut.uo_out.value}"
-        assert ((dut.uo_out.value.integer) & 0xFF) == held, "FAIL: ena hold violated"
+        assert ((dut.uo_out.value.integer & 0xFF) == held), "FAIL: ena hold violated"
 
     # Re-enable and continue checking
     dut.ena.value = 1
