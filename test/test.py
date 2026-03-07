@@ -54,8 +54,15 @@ async def reset_dut(dut, seed, mode):
     dut.uio_in.value = mode & 0x3
     dut.ena.value = 1
     dut.rst_n.value = 0
+
+    #hold rst low for 2 clk edges
+    await RisingEdge(dut.clk)
     await RisingEdge(dut.clk)
     dut.rst_n.value = 1
+
+    await RisingEdge(dut.clk)
+    await Timer(1, unit="ns")
+    
     # Reference state
     ref_l = 0x01 if (seed & 0xFF) == 0 else (seed & 0xFF)
     ref_c = 0
@@ -66,8 +73,11 @@ async def reset_dut(dut, seed, mode):
 async def step_check(dut, ref_l, ref_c, mode):
     exp = pixel(ref_l, ref_c, mode)
     await RisingEdge(dut.clk)
-    await Timer(1, units="ns")   # allow signals to settle
-    got = int(dut.uo_out.value) & 0xFF
+    await Timer(1, unit="ns")   # allow signals to settle
+
+    assert dut.uo_out.value.is_resolvable, f"Fail: uo_out has unknwn bits {dut.uo_out.value}"
+    got = dut.uo_out.value.integer & 0xFF
+
     # Self-checking assertion
     assert got == exp, (
         f"FAIL mode={mode} seed={int(dut.ui_in.value):02x} "
@@ -96,7 +106,7 @@ async def test_project(dut):
     dut.uio_in.value = 0
     dut.rst_n.value = 1
     
-    await Timer(20, units="ns")
+    await Timer(20, unit="ns")
 
     # Keep testing the module by changing the input values, waiting for
     # one or more clock cycles, and asserting the expected output values.
@@ -115,14 +125,17 @@ async def test_project(dut):
     mode = 1
     ref_l, ref_c = await reset_dut(dut, 0x3C, mode)
     ref_l, ref_c = await step_check(dut, ref_l, ref_c, mode)
-    held = int(dut.uo_out.value) & 0xFF
+
+    assert dut.uo_out.value.is_resolvable, f"Fail: uo_out has unknwn bits {dut.uo_out.value}"
+    held = dut.uo_out.value.integer & 0xFF
     dut.ena.value = 0
 
     # Output should remain constant while ena=0
     for _ in range(5):
         await RisingEdge(dut.clk)
-        await Timer(1, units="ns")
-        assert (int(dut.uo_out.value) & 0xFF) == held, "FAIL: ena hold violated"
+        await Timer(1, unit="ns")
+        assert dut.uo_out.value.is_resolvable, "Fail: uo_out has unknwn bits {dut.uo_out.value}"
+        assert ((dut.uo_out.value.integer) & 0xFF) == held, "FAIL: ena hold violated"
 
     # Re-enable and continue checking
     dut.ena.value = 1
