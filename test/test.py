@@ -59,7 +59,8 @@ async def reset_dut(dut, seed, mode):
     await RisingEdge(dut.clk)
     await RisingEdge(dut.clk)
     dut.rst_n.value = 1
-
+    
+    await RisingEdge(dut.clk)
     await Timer(1, unit="ns")
     
     # Reference state
