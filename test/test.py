@@ -70,8 +70,6 @@ async def reset_dut(dut, seed, mode):
     if os.getenv("GATES") == "yes":
         await RisingEdge(dut.clk)
         await Timer(1, unit="ns")
-        ref_l = lfsr_next(ref_l, mode)
-        ref_c = (ref_c + 1) & 0xFF
     
     return ref_l, ref_c
 
