@@ -1,9 +1,9 @@
 # Tiny Tapeout project information
 project:
-  title:        "Glitch Art Generator"      # Project title
-  author:       "Angelica Arroyo"      # Your name
+  title:        "[Glitch Art Generator]"      # Project title
+  author:       "[Angelica Arroyo]"      # Your name
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  "8-bit lfsr glitch pattern generator with 4 selectable modes"      # One line description of what your project does
+  description:  "[8-bit lfsr glitch pattern generator with 4 selectable modes]"      # One line description of what your project does
   language:     "SystemVerilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
   clock_hz:     10000000       # Clock frequency in Hz (or 0 if not applicable)
 
