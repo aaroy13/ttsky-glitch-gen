@@ -4,6 +4,7 @@
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, Timer
+import os
 
 #help functions
 
@@ -65,6 +66,12 @@ async def reset_dut(dut, seed, mode):
     # Reference state
     ref_l = 0x01 if (seed & 0xFF) == 0 else (seed & 0xFF)
     ref_c = 0
+
+    if os.getenv("GATES") == "yes":
+        await RisingEdge(dut.clk)
+        await Timer(1, unit="ns")
+        ref_l = lfsr_next(ref_l, mode)
+        ref_c = (ref_c + 1) & 0xFF
     
     return ref_l, ref_c
 
