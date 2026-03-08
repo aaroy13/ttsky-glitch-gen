@@ -5,6 +5,7 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, Timer
 import os
+from pathlib import Path
 
 #help functions
 
@@ -67,7 +68,8 @@ async def reset_dut(dut, seed, mode):
     ref_l = 0x01 if (seed & 0xFF) == 0 else (seed & 0xFF)
     ref_c = 0
 
-    if os.getenv("GATES") == "yes":
+    is_gl = Path(__file__).with_name("gate_level_netlist.v").exists()
+    if is_gl:
         await RisingEdge(dut.clk)
         await Timer(1, unit="ns")
     
